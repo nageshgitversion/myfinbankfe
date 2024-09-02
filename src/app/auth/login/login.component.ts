@@ -11,7 +11,8 @@ import { Router } from '@angular/router';
   selector: 'app-login',
   templateUrl: './login.component.html',
   standalone: true,
-  imports: [ReactiveFormsModule]// New configuration for HttpClient
+  imports: [ReactiveFormsModule],
+  styleUrls: ['./login.component.css']// New configuration for HttpClient
 })
 export class LoginComponent {
   loginForm: FormGroup;
@@ -31,8 +32,19 @@ export class LoginComponent {
       this.authService.login(username, password).subscribe({
         next: (response) => {
           console.log('Login successful', response);
-          // Redirect to user-dashboard upon successful login
-          this.router.navigate(['/dashboard']);
+          
+          // Assuming the response contains the role of the user
+          const userRole = response.role; // Adjust this based on your actual response structure
+          this.authService.setUser(response);
+          // Redirect based on the role
+          if (userRole === 'ADMIN') {
+            this.router.navigate(['/admin-dashboard']);
+          } else if (userRole === 'USER') {
+            this.router.navigate(['/user-dashboard']);
+          } else {
+            console.error('Unknown role:', userRole);
+            // Handle unknown role
+          }
         },
         error: (error) => {
           console.error('Login failed', error);

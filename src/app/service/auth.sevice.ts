@@ -27,11 +27,7 @@ export class AuthService {
 
   
 
-  logout(): void {
-    this.userSubject.next(null); // Clear user info
-    localStorage.removeItem('user'); // Clear from local storage
-  }
-
+ 
   setUser(user: any): void {
     this.userSubject.next(user);
     localStorage.setItem('user', JSON.stringify(user)); // Store user info
@@ -41,12 +37,21 @@ export class AuthService {
     return JSON.parse(localStorage.getItem('user') || '{}');
   }
 
-  getRole(): string {
-    const token = localStorage.getItem('token');
-    if (token) {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.role;
-    }
-    return '';
+
+   // Method to store user details and role in local storage
+   storeUserDetails(user: any): void {
+    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('role', user.role); // Store user role
+  }
+
+  // Method to get the stored user role
+  getRole(): string | null {
+    return localStorage.getItem('role');
+  }
+
+  // Method to clear user details from local storage
+  logout(): void {
+    localStorage.removeItem('user');
+    localStorage.removeItem('role');
   }
 }

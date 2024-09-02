@@ -7,19 +7,30 @@ import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from './service/auth.sevice';
 import { provideHttpClient } from '@angular/common/http'; // New import
 import { RegisterComponent } from './auth/register/register.component';
+import { UserDashboardComponent } from './dashboard/user-dashboard/user-dashboard.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { CommonModule } from '@angular/common';
+
+import { MatTabsModule } from '@angular/material/tabs'; 
 
 @NgModule({
   declarations: [
-    AppComponent,
-    LoginComponent,
-    RegisterComponent
   ],
   imports: [
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
     ReactiveFormsModule,
     BrowserModule,
-    AppComponent// Import the standalone component
+    AppComponent,
+    CommonModule,
+    MatTabsModule,// Import the standalone component
   ], // Provide AuthService here
-  bootstrap: [AppComponent],
+
 
   providers: [
     provideHttpClient() ,AuthService],
