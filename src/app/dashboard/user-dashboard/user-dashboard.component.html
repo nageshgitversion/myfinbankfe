@@ -4,6 +4,7 @@
     <button (click)="selectTab('deposit')" [class.active]="activeTab === 'deposit'">Deposit</button>
     <button (click)="selectTab('transfer')" [class.active]="activeTab === 'transfer'">Transfer</button>
     <button (click)="selectTab('investment')" [class.active]="activeTab === 'investment'">Investment</button>
+    <button (click)="selectTab('transaction-list')" [class.active]="activeTab === 'transaction-list'">Transactions</button>
     <button (click)="selectTab('loan')" [class.active]="activeTab === 'loan'">Calculate Loan EMI</button>
     <button (click)="logout()">Logout</button>
   </div>
@@ -51,6 +52,28 @@
       
       <button type="submit" [disabled]="investmentForm.invalid">Invest</button>
     </form>
+  </div>
+
+  <div *ngIf="activeTab === 'transaction-list'">
+    <h2>Transaction List</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Type</th>
+          <th>Date</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let transaction of transactions">
+          <td>{{ transaction.id }}</td>
+          <td>{{ transaction.type }}</td>
+          <td>{{ transaction.date }}</td>
+          <td>{{ transaction.amount }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <div *ngIf="activeTab === 'loan'">

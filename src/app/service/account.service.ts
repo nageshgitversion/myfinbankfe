@@ -35,6 +35,12 @@ export class AccountService {
     return this.http.post(`${this.apiUrl}/deposit`, null, { params });
   }
 
+  getAccountsByUserId(userId: number): Observable<Account[]> {
+    const params = new HttpParams()
+    .set('userId', userId);
+    return this.http.get<Account[]>(`${this.apiAdminUrl}/user`,{params});
+  }
+
   // Transfer money between accounts
   transfer(fromAccountNumber: number, toAccountNumber: number, amount: number): Observable<any> {
     const params = new HttpParams()
@@ -62,7 +68,14 @@ export class AccountService {
 
   // Get list of accounts
   getAccounts(): Observable<any[]> {
+    
     return this.http.get<any[]>(`${this.apiAdminUrl}/accounts`);
+  }
+  // Get list of accounts
+  getTransaction(accountNumber: number): Observable<any[]> {
+    const params = new HttpParams()
+      .set('accountId', accountNumber);
+    return this.http.get<any[]>(`${this.apiUrl}/transactions`,{params});
   }
 
 
@@ -78,8 +91,10 @@ export class AccountService {
     return this.http.post(`${this.apiAdminUrl}/accounts/create`, account);
   }
 
-  deleteAccount(accountNumber: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiAdminUrl}/accounts/delete`);
+  deleteAccount(accountId: string): Observable<void> {
+    const params = new HttpParams()
+    .set('accountId', accountId);
+    return this.http.delete<void>(`${this.apiAdminUrl}/accounts/delete`,{params});
   }
 
   updateAccount(customerId: number,initialDeposit: number,id: number): Observable<void> {

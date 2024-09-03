@@ -4,6 +4,8 @@ import { AccountService } from '../../service/account.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../service/auth.sevice';
+import { Transaction } from '../../model/transaction';
+import { Account } from '../../model/account';
 
 @Component({
   selector: 'app-user-dashboard',
@@ -22,8 +24,14 @@ export class UserDashboardComponent {
   transferForm: FormGroup;
   investmentForm: FormGroup;
   loanForm: FormGroup;
+  accounts: Account[] = [];
 
+  transactions: any[] = [];
+  firstAccountId: number | undefined = undefined;
   constructor(private fb: FormBuilder, private accountService: AccountService, private authService: AuthService) {
+    
+    const user = authService.getUser();
+    this.getAccounts(user.id);
     this.withdrawForm = this.fb.group({
       amount: [null, [Validators.required, Validators.min(1)]]
     });
@@ -47,10 +55,24 @@ export class UserDashboardComponent {
       interestRate: [null, [Validators.required, Validators.min(0)]],
       months: [null, [Validators.required, Validators.min(1)]]
     });
+
+    this.loadTransactions();
   }
 
-  selectTab(tab: string) {
-    this.activeTab = tab;
+
+
+  getAccounts(userId: number): void {
+    this.accountService.getAccountsByUserId(userId).subscribe({
+      next: (data) => {
+        this.accounts = data;
+        if (this.accounts.length > 0) {
+          this.firstAccountId = this.accounts[0]?.id!;// Access the first account's ID
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching accounts', err);
+      }
+    });
   }
 
   logout() {
@@ -59,17 +81,30 @@ export class UserDashboardComponent {
   onWithdraw() {
     if (this.withdrawForm.valid) {
       const amount = this.withdrawForm.value.amount;
-      this.accountService.withdraw(1,amount).subscribe(
+      this.accountService.withdraw(this.firstAccountId?this.firstAccountId:0,amount).subscribe(
         response => console.log('Withdraw successful', response),
         error => console.error('Withdraw failed', error)
       );
     }
   }
 
+  selectTab(tab: string) {
+    this.activeTab = tab;
+    if (tab === 'transaction-list') {
+      this.loadTransactions();
+    }
+  }
+
+  loadTransactions() {
+    this.accountService.getTransaction(this.firstAccountId?this.firstAccountId:0).subscribe(data => {
+      this.transactions = data;
+    });
+  }
+
   onDeposit() {
     if (this.depositForm.valid) {
       const amount = this.depositForm.value.amount;
-      this.accountService.deposit(1,amount).subscribe(
+      this.accountService.deposit(this.firstAccountId?this.firstAccountId:0,amount).subscribe(
         response => console.log('Deposit successful', response),
         error => console.error('Deposit failed', error)
       );
@@ -79,7 +114,7 @@ export class UserDashboardComponent {
   onTransfer() {
     if (this.transferForm.valid) {
       const { amount, toAccount } = this.transferForm.value;
-      this.accountService.transfer(1,2, amount).subscribe(
+      this.accountService.transfer(this.firstAccountId?this.firstAccountId:0,toAccount, amount).subscribe(
         response => console.log('Transfer successful', response),
         error => console.error('Transfer failed', error)
       );
@@ -89,7 +124,7 @@ export class UserDashboardComponent {
   onInvest() {
     if (this.investmentForm.valid) {
       const { amount, type } = this.investmentForm.value;
-      this.accountService.invest(1,amount, type).subscribe(
+      this.accountService.invest(this.firstAccountId?this.firstAccountId:0,amount, type).subscribe(
         response => console.log('Investment successful', response),
         error => console.error('Investment failed', error)
       );
