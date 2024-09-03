@@ -51,6 +51,8 @@ export class AuthService {
 
   // Method to clear user details from local storage
   logout(): void {
+     // Assuming this clears user data in the service
+     this.router.navigate(['/login']); 
     localStorage.removeItem('user');
     localStorage.removeItem('role');
   }

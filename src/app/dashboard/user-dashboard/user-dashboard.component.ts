@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AccountService } from '../../service/account.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../service/auth.sevice';
 
 @Component({
   selector: 'app-user-dashboard',
@@ -22,7 +23,7 @@ export class UserDashboardComponent {
   investmentForm: FormGroup;
   loanForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private accountService: AccountService) {
+  constructor(private fb: FormBuilder, private accountService: AccountService, private authService: AuthService) {
     this.withdrawForm = this.fb.group({
       amount: [null, [Validators.required, Validators.min(1)]]
     });
@@ -52,6 +53,9 @@ export class UserDashboardComponent {
     this.activeTab = tab;
   }
 
+  logout() {
+    this.authService.logout();  
+  }
   onWithdraw() {
     if (this.withdrawForm.valid) {
       const amount = this.withdrawForm.value.amount;

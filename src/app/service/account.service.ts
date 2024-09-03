@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient,HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../environment/environment';
+import { Account } from '../model/account';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,8 @@ export class AccountService {
   private apiUrl = `${environment.apiUrl}/api/customer`;
 
   private apiIvestUrl = `${environment.apiUrl}/api/investments`;
+
+  private apiAdminUrl = `${environment.apiUrl}/api/admin`;
 
   constructor(private http: HttpClient) { }
 
@@ -59,6 +62,35 @@ export class AccountService {
 
   // Get list of accounts
   getAccounts(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/list`);
+    return this.http.get<any[]>(`${this.apiAdminUrl}/accounts`);
   }
+
+
+  
+  createAccount(accountNumber: string,customerId: number,initialDeposit: number): Observable<any> {
+    const account: Account = {
+      accountNumber: accountNumber,
+      user: {
+        id: customerId
+      },
+      balance: initialDeposit,
+    };
+    return this.http.post(`${this.apiAdminUrl}/accounts/create`, account);
+  }
+
+  deleteAccount(accountNumber: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiAdminUrl}/accounts/delete`);
+  }
+
+  updateAccount(customerId: number,initialDeposit: number,id: number): Observable<void> {
+    const account: Account = {
+      id: id,
+      user: {
+        id: customerId
+      },
+      balance: initialDeposit,
+    };
+    return this.http.put<void>(`${this.apiAdminUrl}/accounts/update`, account);
+  }
+
 }
